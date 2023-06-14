@@ -7,3 +7,8 @@ let userAge;
 typeof userAge; // => undefined
 userName = undefined;
 typeof userName; // => undefined
+
+// Сравнение
+userName = null;
+userName == userAge; // => true
+userName === userAge; // => false
