@@ -232,3 +232,65 @@ b.join(" -_- "); // => ' -_-  -_-  -_-  -_-  -_-  -_-  -_-  -_-  -_- '
 [1,2,3].toString(); // => '1,2,3'
 ["a", "b", "c"].toString(); // => "a,b,c"
 ["a", 2, true].toLocaleString(); // => 'a,2,true'
+
+// Статические функции массивов
+Array.isArray([1,2]); // => true
+Array.isArray({}); // => false
+
+// Объекты, похожие на массивы
+let obj = {}; // Начать с обыкновенного пустого объекта
+for(let i = 0; i < 10; i++) {
+    obj[i] = i*i;
+}
+obj.length = 10;
+
+let total = 0; // Выполним итерацию по объекту, как если бы он был настоящим массивом
+for(let i = 0; i < obj.length; i++) {
+    total += obj[i];
+}
+
+function isArrayLike(object) { // Определяет, является ли object объектом, похожим на массив
+    if( object &&
+        typeof object === "object" &&
+        Number.isFinite(object.length) &&
+        object.length >= 0 &&
+        Number.isInteger(object.length) &&
+        object.length < 4294967295) {
+            return true; // Тогда объект object похож на массив
+        }
+        else {
+            return false; // Иначе объект object не похож на массив
+        }
+}
+isArrayLike(obj); // => true
+
+Array.prototype.join.call(obj, "-"); // => '0-1-4-9-16-25-36-49-64-81'
+Array.prototype.map.call(obj, element => {
+    return element * element;
+}); // => (10) [0, 1, 16, 81, 256, 625, 1296, 2401, 4096, 6561]
+Array.prototype.slice.call(obj, 1, 8); // => (7) [1, 4, 9, 16, 25, 36, 49]
+Array.from(obj); // => (10) [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+// Строки как массивы
+let str = "Hello, JavaScript!";
+str.charAt(10); // => 'a'
+str[14]; // => 'i'
+
+Array.prototype.join.call(str, "-"); // => 'H-e-l-l-o-,- -J-a-v-a-S-c-r-i-p-t-!'
+Array.prototype.map.call(str, element => {
+    return element += element.toUpperCase();
+}); // => (18) ['HH', 'eE', 'lL', 'lL', 'oO', ',,', '  ', 'JJ', 'aA', 'vV', 'aA', 'SS', 'cC', 'rR', 'iI', 'pP', 'tT', '!!']
+
+let temp = []; // Буффер
+for(let element in str) {
+    temp.push(element);
+} // temp = (18) ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17']
+
+temp = []; // Очищение буффера
+for(let element of str) {
+    temp.push(element);
+} // temp = (18) ['H', 'e', 'l', 'l', 'o', ',', ' ', 'J', 'a', 'v', 'a', 'S', 'c', 'r', 'i', 'p', 't', '!']
+
+for(let element in str){
+    console.log(str[element]); // => ['H', 'e', 'l', 'l', 'o', ',', ' ', 'J', 'a', 'v', 'a', 'S', 'c', 'r', 'i', 'p', 't', '!']
+}
