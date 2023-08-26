@@ -21,7 +21,7 @@ const strict = (function() {
 strict(); // => false
 
 // Вызов метода
-const human = {
+const human = { // Объектный литерал
     name: "Dmitry",
     surname: "Anufriev",
     age: 20,
@@ -136,4 +136,92 @@ const human = {
             return new Error("Неверно указан возраст");
         }
     }
+};
+
+const calculator = { // Объектный литерал
+    operand1: 1,
+    operand2: 2,
+    getSum() { // Для этой функции мы используем сокращенный синтаксис методов
+        return this.result = this.operand1 + this.operand2;
+    }
 }
+calculator.getSum(); // => 3
+calculator.result; // => 3
+
+const obj = { // Объект obj
+    method: function() {
+        const self = this; // Сохранить значение this в константу self
+        this === obj; // => true: this является объектом obj
+        fun(); // Вызываем вспомогательную функцию
+        function fun() {
+            this === obj ? console.log("this === obj"): console.log("self === obj") // => false: this является глобальным объектом или undefined
+            self === obj; // => true: self является внешним значением this
+        }
+    }
+}
+obj.method(); // => self === obj undefined
+
+const f = () => {
+    this === obj; // true: поскольку стрелочные функции наследуют this
+}
+
+const fun = (function() {
+    this === obj; // true: поскольку мы привязали жту функцию к внешнему this
+}).bind(this);
+
+// Вызов конструктора
+function getFullName(name, surname) {
+    this.name = name;
+    this.surname = surname;
+    return this.fullName = this.name + " " + this.surname;
+}
+let user = new getFullName("Misha", "Prusakov");
+user.name; // => Misha
+user.surname; // => Prusakov
+user.fullName; // => Misha Prusakov
+
+// Косвенный вызов функции
+function getName() {
+    const name = this.name;
+    return this.name;
+}
+
+const user1 = {
+    name: "Ivan",
+    position: "Frontend Developer",
+    salary: 1200
+}
+
+const result = getName.call(user1); // => result = "Ivan"
+
+function promote(position, salary) {
+    this.salary = salary;
+    this.position = position;
+    return this.position + " earns " + this.salary + " $";
+}
+
+const junior = {
+    name: 'Fritz',
+    position: 'junior developer',
+    salary: 1000
+}
+
+const middle = {
+    name: 'Max',
+    position: 'middle developer',
+    salary: 2000
+}
+
+const senior = {
+    name: 'Manu',
+    position: 'senior developer',
+    salary: 3000
+}
+
+const result1 = promote.call(junior, 'super junior developer', 1200); // => 'super junior developer earns 1200 $'
+const result2 = promote.call(middle, 'super middle developer', 2200); // => 'super middle developer earns 2200 $'
+const result3 = promote.call(senior, 'super senior developer', 3200); // => 'super senior developer earns 3200 $'
+
+const resultA = promote.apply(junior, [ 'super junior developer', 1200 ]); // => 'super junior developer earns 1200 $'
+const resultB = promote.apply(middle, [ 'super middle developer', 2200 ]); // => 'super middle developer earns 2200 $'
+const resultC = promote.apply(senior, [ 'super senior developer', 3200 ]); // => 'super senior developer earns 3200 $'
